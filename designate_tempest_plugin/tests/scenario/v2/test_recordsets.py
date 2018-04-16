@@ -18,7 +18,8 @@ import ddt
 
 from designate_tempest_plugin.tests import base
 from designate_tempest_plugin.common import waiters
-
+from subprocess import PIPE
+from subprocess import Popen
 
 LOG = logging.getLogger(__name__)
 
@@ -55,6 +56,16 @@ class RecordsetsTest(base.BaseDnsV2Test):
 
         cls.zone = zone
 
+    def _dig_query(self, command):
+        process = Popen(command.split(), stdout=PIPE, stderr=PIPE)
+        stdout, stderr = process.communicate()
+        print("query result is {0}/{1}".format(stdout, stderr))
+        if process.returncode:
+            raise Exception.message("DNS dig query error with %s"
+                                    % stderr)
+        answer = stdout.decode('utf-8').splitlines()
+        return answer
+
     @decorators.attr(type='slow')
     @decorators.idempotent_id('4664ed66-9ff1-45f2-9e60-d4913195c505')
     @ddt.file_data("./recordset_data.json")
@@ -86,6 +97,16 @@ class RecordsetsTest(base.BaseDnsV2Test):
         waiters.wait_for_recordset_status(self.recordset_client,
                                           self.zone['id'], recordset['id'],
                                           'ACTIVE')
+
+        LOG.info('Dig query verification')
+        _, ns_recordset = self.recordset_client.list_recordset(
+            self.zone['id'], {'type': 'NS'})
+
+        ns = ns_recordset['recordsets'][0]['records'][0]
+        domain = "{0}.{1}".format(name, self.zone['name'])
+        dig = "dig +short {0} @{1}".format(domain, ns)
+        query = self._dig_query(dig)
+        self.assertEqual(set(query), set(records))
 
         LOG.info('Delete the recordset')
         _, body = self.recordset_client.delete_recordset(self.zone['id'],
