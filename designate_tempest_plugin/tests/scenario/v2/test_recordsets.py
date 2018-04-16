@@ -15,10 +15,10 @@ from tempest.lib.common.utils import test_utils
 from tempest.lib import decorators
 from tempest.lib import exceptions as lib_exc
 import ddt
+import dns.resolver
 
 from designate_tempest_plugin.tests import base
 from designate_tempest_plugin.common import waiters
-
 
 LOG = logging.getLogger(__name__)
 
@@ -55,6 +55,13 @@ class RecordsetsTest(base.BaseDnsV2Test):
 
         cls.zone = zone
 
+    def _dns_query(self, recordset, rstype, ns):
+        resolver = dns.resolver.Resolver()
+        ns_answers = resolver.query(ns, "A")
+        resolver.nameservers = [answer.address for answer in ns_answers]
+        answers = resolver.query(recordset, rstype)
+        return [answer.address for answer in answers]
+
     @decorators.attr(type='slow')
     @decorators.idempotent_id('4664ed66-9ff1-45f2-9e60-d4913195c505')
     @ddt.file_data("recordset_data.json")
@@ -86,6 +93,18 @@ class RecordsetsTest(base.BaseDnsV2Test):
         waiters.wait_for_recordset_status(self.recordset_client,
                                           self.zone['id'], recordset['id'],
                                           'ACTIVE')
+
+        LOG.info('DNS query verification')
+        try:
+            _, ns_recordset = self.recordset_client.list_recordset(
+                self.zone['id'], {'type': 'NS'})
+
+            ns = ns_recordset['recordsets'][0]['records'][0]
+            query = self._dns_query(recordset_name, type, ns)
+        except Exception:
+            self.fail("DNS query raised Exception!")
+
+        self.assertEqual(set(query), set(records))
 
         LOG.info('Delete the recordset')
         _, body = self.recordset_client.delete_recordset(self.zone['id'],
