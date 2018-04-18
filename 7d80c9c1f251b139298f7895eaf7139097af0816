@@ -22,6 +22,30 @@
       "revId": "7d80c9c1f251b139298f7895eaf7139097af0816",
       "serverId": "f182a8af-62ca-4ceb-ab81-14f8fec9c6c5",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b97633f5_21c9a490",
+        "filename": "designate_tempest_plugin/tests/scenario/v2/test_recordsets.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000077
+      },
+      "writtenOn": "2018-04-18T00:46:40Z",
+      "side": 1,
+      "message": "dnspython looks perfect\n\nhttps://www.adampalmer.me/iodigitalsec/2014/11/21/performing-dns-queries-python/",
+      "parentUuid": "97c326ce_c9c26bd4",
+      "range": {
+        "startLine": 60,
+        "startChar": 8,
+        "endLine": 60,
+        "endChar": 66
+      },
+      "revId": "7d80c9c1f251b139298f7895eaf7139097af0816",
+      "serverId": "f182a8af-62ca-4ceb-ab81-14f8fec9c6c5",
+      "unresolved": false
     }
   ]
 }
