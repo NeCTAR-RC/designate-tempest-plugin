@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27f66b87_102b3612",
+        "filename": "designate_tempest_plugin/tests/scenario/v2/test_recordsets.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000077
+      },
+      "writtenOn": "2018-04-18T00:41:54Z",
+      "side": 1,
+      "message": "is ./ really needed?",
+      "range": {
+        "startLine": 60,
+        "startChar": 20,
+        "endLine": 60,
+        "endChar": 22
+      },
+      "revId": "03fe31cd93c4ec98e204f52eff98fce6e84e93ab",
+      "serverId": "f182a8af-62ca-4ceb-ab81-14f8fec9c6c5",
+      "unresolved": false
+    }
+  ]
+}
