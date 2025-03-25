@@ -75,7 +75,9 @@ class RecordsetsTest(base.BaseDnsV2Test):
 
     @classmethod
     def resource_cleanup(cls):
-        cls.admin_tld_client.delete_tld(cls.class_tld[1]['id'])
+        zone_id = CONF.dns.zone_id
+        if not zone_id:
+            cls.admin_tld_client.delete_tld(cls.class_tld[1]['id'])
         super(RecordsetsTest, cls).resource_cleanup()
 
     def _test_create_and_delete_records_on_existing_zone(
